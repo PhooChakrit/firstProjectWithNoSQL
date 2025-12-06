@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import Product from './models/Product';
+import User from './models/User';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -10,7 +11,7 @@ const products = [
     {
         name: 'Classic Papaya Salad',
         price: 10,
-        description: 'Traditional Thai papaya salad with peanuts and dried shrimp.',
+        description: 'Thai papaya salad with peanuts and dried shrimp.',
         image: 'https://images.unsplash.com/photo-1559314809-0d155014e29e?w=400&h=300&fit=crop'
     },
     {
@@ -41,19 +42,34 @@ const products = [
         name: 'Papaya Salad with Grilled Chicken',
         price: 16,
         description: 'Classic papaya salad served with tender grilled chicken.',
-        image: 'https://images.unsplash.com/photo-1604908177522-40fa6c25e6c1?w=400&h=300&fit=crop'
+        image: '/images/papaya-salad-grilled-chicken.png'
     }
 ];
 
 mongoose.connect(MONGO_URI)
     .then(async () => {
         console.log('Connected to MongoDB');
+        
+        // Clear existing data
         await Product.deleteMany({});
+        await User.deleteMany({});
+        
+        // Seed products
         await Product.insertMany(products);
         console.log('Products seeded');
+        
+        // Seed test users
+        const testUsers = [
+            { username: 'testuser', password: 'testpass123' },
+            { username: 'demo', password: 'demo123' }
+        ];
+        await User.insertMany(testUsers);
+        console.log('Users seeded');
+        
         mongoose.disconnect();
     })
     .catch(err => {
         console.error(err);
         mongoose.disconnect();
     });
+
